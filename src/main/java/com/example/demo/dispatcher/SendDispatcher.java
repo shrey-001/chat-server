@@ -25,24 +25,17 @@ import java.util.Objects;
 @AllArgsConstructor
 public class SendDispatcher {
 
-    private final Map<String, WebSocketSession> sessions;
+    private final SessionRegistry sessionRegistry;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    public SendDispatcher(SessionRegistry webSocketHandler) {
-        this.sessions = webSocketHandler.getSessions();
-    }
 
     public <T> void sendToUser(String userId, T message) {
-        WebSocketSession session = sessions.get(userId);
-
-
+        WebSocketSession session = sessionRegistry.getSession(userId);
         if (Objects.isNull(session) || !session.isOpen()) {
             log.error("Failed to send message. Session for userId: {} is not open or does not exist", userId);
             return;
         }
-
         try {
             String messageString = objectMapper.writeValueAsString(message);
             session.sendMessage(new TextMessage(messageString));
@@ -50,19 +43,6 @@ public class SendDispatcher {
         } catch (IOException e) {
             log.error("Error sending message to userId: {}", userId, e);
         }
-    }
-
-    public void broadcast(String message) {
-        sessions.values().stream()
-                .filter(WebSocketSession::isOpen)
-                .forEach(session -> {
-                    try {
-                        session.sendMessage(new TextMessage(message));
-                        log.info("Broadcasted message to sessionId: {}", session.getId());
-                    } catch (IOException e) {
-                        log.error("Error broadcasting message to sessionId: {}", session.getId(), e);
-                    }
-                });
     }
 }
 
