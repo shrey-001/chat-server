@@ -3,6 +3,7 @@ package com.example.demo.services.kafka;
 import com.example.demo.dispatcher.SendDispatcher;
 import com.example.demo.models.dtos.MessageContainer;
 import com.example.demo.models.dtos.MessageDTO;
+import com.example.demo.services.dbservices.ChatService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -18,12 +19,19 @@ public class KafkaListenerService {
     private final ObjectMapper objectMapper;
     private final SendDispatcher sendDispatcher;
 
+    private final ChatService chatService;
+
     @KafkaListener(topics = "topic_name", groupId = "group_id")
     public void consume(String message) {
         log.error(String.format("#### -> Consumed message -> %s", message));
         try{
             MessageContainer<MessageDTO> parsedMsg = objectMapper.readValue(message, new TypeReference<MessageContainer<MessageDTO>>() {});
-            sendDispatcher.sendToUser(parsedMsg.getPayload().getReceiverId(), parsedMsg);
+
+            MessageDTO messageDTO = parsedMsg.getPayload();
+            //filter out the sender
+            chatService.getChatParticipants(messageDTO.getChatId()).stream()
+                    .filter(participantId -> !participantId.equals(messageDTO.getSenderId()))
+                    .forEach(participantId -> sendDispatcher.sendToUser(participantId.toString(), messageDTO.getContent()));
         }
         catch (Exception e){
             log.error("Error while consuming message, error is {}", e.getMessage());

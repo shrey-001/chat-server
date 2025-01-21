@@ -1,27 +1,19 @@
 package com.example.demo.services;
 
-import com.example.demo.dispatcher.SendDispatcher;
-import com.example.demo.models.ReceiveMessageType;
-import com.example.demo.models.dtos.MessageContainer;
 import com.example.demo.models.dtos.MessageDTO;
-import com.example.demo.services.kafka.KafkaProducerService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import com.example.demo.models.dtos.MessageDetailDTO;
+import com.example.demo.models.entities.Chat;
 
-@Component
-@Slf4j
-@AllArgsConstructor
-public class MessagingService {
+import java.util.List;
 
-    private final SendDispatcher sendDispatcher;
+public interface MessagingService {
+    void handleMessage(MessageDTO messageDTO);
 
-    private final KafkaProducerService kafkaProducerService;
-    public void handleMessage(MessageDTO messageDTO){
-        MessageContainer<MessageDTO> messageContainer = new MessageContainer<>();
-        messageContainer.setType(ReceiveMessageType.MESSAGE);
-        messageContainer.setPayload(messageDTO);
+    List<MessageDetailDTO> getMessagesByChatId(Long chatId, Long page, Long size);
 
-        kafkaProducerService.sendDemoProducer(messageContainer);
-    }
+    Chat createChat(String chatName, List<Long> participantIds);
+
+    void reactToMessage(Long messageId, String type, Long userId);
+
+
 }
