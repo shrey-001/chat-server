@@ -20,7 +20,6 @@ public class MessagingController {
     @PostMapping("/messages/{chatId}")
     public List<MessageDetailDTO> getMessagesByChatId(@PathVariable Long chatId, @RequestParam Long page, @RequestParam Long size) {
         return messagingService.getMessagesByChatId(chatId, page, size);
-
     }
 
     @PostMapping("/chat/create")
