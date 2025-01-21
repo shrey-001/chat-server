@@ -7,7 +7,6 @@ import com.example.demo.models.entities.Chat;
 import java.util.List;
 
 public interface MessagingService {
-    void handleMessage(MessageDTO messageDTO);
 
     List<MessageDetailDTO> getMessagesByChatId(Long chatId, Long page, Long size);
 

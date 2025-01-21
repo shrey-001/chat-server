@@ -2,6 +2,7 @@ package com.example.demo.services.kafka;
 
 import com.example.demo.models.dtos.MessageContainer;
 import com.example.demo.models.dtos.MessageDTO;
+import com.example.demo.models.dtos.TypingDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,9 @@ public class KafkaProducerService {
     @Value("${kafka.topic-name.topic_name}")
     private String topicName;
 
+    @Value("${kafka.topic-name.typing_topic}")
+    private String typingTopic;
+
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     private final ObjectMapper objectMapper;
@@ -27,6 +31,15 @@ public class KafkaProducerService {
 
         try {
             String msg = objectMapper.writeValueAsString(message);
+            kafkaTemplate.send(topicName, msg);
+        } catch (Exception e) {
+            throw new KafkaException(String.format("Error while pushing message, error is %s", e.getMessage()));
+        }
+    }
+
+    public void sendTypingTopic(MessageContainer<TypingDTO> typingContainer) {
+        try {
+            String msg = objectMapper.writeValueAsString(typingContainer);
             kafkaTemplate.send(topicName, msg);
         } catch (Exception e) {
             throw new KafkaException(String.format("Error while pushing message, error is %s", e.getMessage()));

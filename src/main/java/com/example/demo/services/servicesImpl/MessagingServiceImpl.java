@@ -33,15 +33,6 @@ public class MessagingServiceImpl implements MessagingService {
 
 
     @Override
-    public void handleMessage(MessageDTO messageDTO){
-        MessageContainer<MessageDTO> messageContainer = new MessageContainer<>();
-        messageContainer.setType(ReceiveMessageType.MESSAGE);
-        messageContainer.setPayload(messageDTO);
-
-        kafkaProducerService.sendDemoProducer(messageContainer);
-    }
-
-    @Override
     public List<MessageDetailDTO> getMessagesByChatId(Long chatId, Long page, Long size) {
 
         List<MessageDetailDTO> messages = messageService.getMessagesByChatId(chatId, page, size);
