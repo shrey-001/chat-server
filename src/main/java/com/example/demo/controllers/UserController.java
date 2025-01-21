@@ -2,7 +2,7 @@ package com.example.demo.controllers;
 
 
 import com.example.demo.models.entities.User;
-import com.example.demo.services.UserService;
+import com.example.demo.services.dbservices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

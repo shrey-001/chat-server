@@ -2,7 +2,7 @@ package com.example.demo.handler.Receiver;
 
 import com.example.demo.models.ReceiveMessageType;
 import com.example.demo.models.dtos.MessageDTO;
-import com.example.demo.services.MessagingService;
+import com.example.demo.services.servicesImpl.MessagingServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
@@ -11,7 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 @Component
 @AllArgsConstructor
 public class MessageReceiver implements ReceiveHandler<MessageDTO> {
-    private final MessagingService messagingService;
+    private final MessagingServiceImpl messagingService;
 
     @Override
     public void handleReceive(WebSocketSession session, MessageDTO payload) {
